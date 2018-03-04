@@ -17,15 +17,14 @@
  *=========================================================================*/
 
 #include "itkMaximumAbsoluteValueImageFilter.h"
-#include "itkTestingMacros.h"
+#include "gtest/gtest.h"
 #include "itkImageRegionIterator.h"
 
-int itkMaximumAbsoluteValueImageFilterTest( int, char * [] )
-{
-  constexpr unsigned int Dimension = 2;
-  using PixelType = int;
-  using ImageType = itk::Image< PixelType, Dimension >;
-  using MaximumAbsoluteValueImageFilterType = itk::MaximumAbsoluteValueImageFilter<ImageType>;
+TEST(itkMaximumAbsoluteValueImageFilterUnitTest, TakesAbsMaxOfSimpleImages) {
+  const unsigned int                                      Dimension = 2;
+  typedef int                                             PixelType;
+  typedef itk::Image< PixelType, Dimension >              ImageType;
+  typedef itk::MaximumAbsoluteValueImageFilter<ImageType> MaximumAbsoluteValueImageFilterType;
   MaximumAbsoluteValueImageFilterType::Pointer maxAbsFilter = MaximumAbsoluteValueImageFilterType::New();
   
   ITK_EXERCISE_BASIC_OBJECT_METHODS( maxAbsFilter, MaximumAbsoluteValueImageFilter, BinaryFunctorImageFilter );
@@ -33,7 +32,6 @@ int itkMaximumAbsoluteValueImageFilterTest( int, char * [] )
   /** Create an image and run a basic test */
   ImageType::RegionType region;
   ImageType::IndexType start;
-
   start[0] = 0;
   start[1] = 0;
  
@@ -71,9 +69,10 @@ int itkMaximumAbsoluteValueImageFilterTest( int, char * [] )
     ++it2;
   }
 
+  /* Apply filter */
   maxAbsFilter->SetInput1(image1);
   maxAbsFilter->SetInput2(image2);
-  maxAbsFilter->Update();
+  EXPECT_NO_THROW(maxAbsFilter->Update());
   ImageType::Pointer outputImage = maxAbsFilter->GetOutput();
 
   IteratorType  ot( outputImage, region);
@@ -82,14 +81,10 @@ int itkMaximumAbsoluteValueImageFilterTest( int, char * [] )
   while( !ot.IsAtEnd() )
   {
     if ((i % 2) == 0) {
-      ITK_TEST_EXPECT_EQUAL(ot.Get(), -2);
+      EXPECT_EQ(ot.Get(), -2);
     } else {
-      ITK_TEST_EXPECT_EQUAL(ot.Get(), 2);
+      EXPECT_EQ(ot.Get(), 2);
     }
     ++ot;
   }
-
-  /** TODO: Write an integration test */
-
-  return EXIT_SUCCESS;
 }
