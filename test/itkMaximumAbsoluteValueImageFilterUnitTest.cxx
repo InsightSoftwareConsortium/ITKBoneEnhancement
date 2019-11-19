@@ -50,7 +50,9 @@ TEST(itkMaximumAbsoluteValueImageFilterUnitTest, TakesAbsMaxOfSimpleImages) {
   image2->SetRegions(region);
   image2->Allocate();
 
+  /* Iterate over images and set */
   using IteratorType = itk::ImageRegionIterator< ImageType >;
+
   IteratorType  it1( image1, region);
   IteratorType  it2( image2, region);
   it1.GoToBegin();
